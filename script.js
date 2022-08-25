@@ -1,11 +1,11 @@
+const VALID_SELECTIONS = ["rock", "paper", "scissors"];
+
 /**
  * @function getComputerChoice
  * @returns {string} possible values: "rock", "paper", "scissors"
  */
 function getComputerChoice() {
-  const options = ["rock", "paper", "scissors"];
-
-  return options[Math.floor(Math.random() * 3)];
+  return VALID_SELECTIONS[Math.floor(Math.random() * 3)];
 }
 
 /**
@@ -15,7 +15,7 @@ function getComputerChoice() {
  * @returns {string} return one of the following strings "win", "loss", "tie"
  */
 function playRound(playerSelection, computerSelection) {
-  playerSelection = playerSelection.toLowerCase();
+  playerSelection = playerSelection.toLocaleLowerCase();
 
   if(playerSelection === "rock") {
     if(computerSelection === "scissors") {
@@ -52,13 +52,59 @@ function playRound(playerSelection, computerSelection) {
     }
   }
 }
- 
-const playerSelection = "rock";
-const computerSelection = getComputerChoice();
-console.log(playRound(playerSelection, computerSelection));
 
-// To play a game of 5:
-  // Use a iterator to play 5 rounds
-  // Call the round function for each iteration
-  // Update the score of the game winner
-  // Announce final score after 5 games
+
+/**
+ * @function validateInput Validates that the player has picked either rock, paper or scissor
+ * @param {*} input 
+ */
+function validateInput(input) {
+  if(typeof input !== "string") {
+    return false;
+  }
+
+  if(!VALID_SELECTIONS.includes(input.toLowerCase())) {
+    return false;
+  }
+
+  return true;
+}
+
+
+/**
+ * @function game Simulates the numRounds number of rounds of rock, paper, scissors and returns the winner
+ * @param {string} numRounds The number if games
+ * @return {string} String that states whoever won the game
+ */
+function game(numRounds = 5) {
+  let playerScore = 0;
+  let computerScore = 0;
+
+  for (let i = 0; i < numRounds; i++) {
+    const computerChoice = getComputerChoice();
+    
+    let playerChoice= prompt("Make your choice: Rock, Paper or Scissors?");
+
+    while(!validateInput(playerChoice)) {
+      playerChoice= prompt("Wrong input, try again: Rock, Paper or Scissors?");
+    }
+
+    const result =  playRound(playerChoice, computerChoice);
+
+    if(result === "win") {
+      playerScore++;
+    } else if (result === "loss") {
+      computerScore++;
+    }
+  }
+
+  if(playerScore > computerScore) {
+    return `Congratulations, you won ${playerScore} - ${computerScore}`;
+  } else if (playerScore < computerScore) {
+    return `Oh no, you lost ${playerScore} - ${computerScore}`;
+  } else {
+    return `It's a tie. The result is ${playerScore} - ${computerScore}`;
+  }
+}
+
+console.log(game(5));
