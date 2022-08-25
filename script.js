@@ -1,6 +1,11 @@
-// Store computer choices in variable
-// To play a round:
-  // Randomly pick a computer choice
+// Randomly pick a computer choice
+function getComputerChoice() {
+  const options = ["rock", "paper", "scissors"];
+
+  return options[Math.floor(Math.random() * 3)];
+}
+
+console.log(getComputerChoice());
   // Get user input
   // Make sure input is valid "Rock", "Paper" or "Scissors"
   // Decide who wins
