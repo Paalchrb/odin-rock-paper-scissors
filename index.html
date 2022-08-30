@@ -6,9 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock Paper Scissors</title>
     <!-- Add stylesheets and metadata below this line-->
+    <link rel="stylesheet" href="style.css">
+    <script src="./script.js" defer></script>
   </head>
   <body>
     <!-- Page content below this line-->
-    <script src="./script.js"></script>
+    <div id="main">
+      <h1>This is a game of survival</h1>
+      <div class="container">
+        <h2>Pick your weapon:</h3>
+        <div class="choices">
+          <button id="rock">Rock</button>
+          <button id="paper">Paper</button>
+          <button id="scissors">Scissors</button>
+        </div>
+        <p class="round-score"></p>
+      </div>
+      <div class="score">
+        <h3>Score:</h3>
+        <p class="total-score">Humans <span class="score-count">0 - 0</span> Machines</p>
+      </div>
+    </div>
   </body>
 </html>
