@@ -1,110 +1,156 @@
 const VALID_SELECTIONS = ["rock", "paper", "scissors"];
 
+let playerScore = 0;
+let computerScore = 0;
+
+
+/**
+ * @function capitalizeString
+ * @description Takes a string as argument and return a capitalized version of the given string
+ * @param {string} str 
+ * @returns {string}
+ */
+function capitalizeString(str) {
+  str = str.toLowerCase();
+
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+
 /**
  * @function getComputerChoice
- * @returns {string} possible values: "rock", "paper", "scissors"
+ * @description Randomly return the computer choice as either "rock", "paper" or "scissors"
+ * @returns {string}
  */
 function getComputerChoice() {
   return VALID_SELECTIONS[Math.floor(Math.random() * 3)];
 }
 
+
 /**
- * @function playRound
- * @param {string} playerSelection 
- * @param {string} computerSelection
- * @returns {string} return one of the following strings "win", "loss", "tie"
+ * @function getResultString
+ * @description Return a string that describes the result of the played round
+ * @param {string} playerSelection "rock", "paper" or "scissors"
+ * @param {string} computerSelection "rock", "paper" or "scissors"
+ * @returns {string} 
+ */
+function getResultString(playerSelection, computerSelection) {
+  if(
+    ( playerSelection === "rock" && computerSelection === "scissors" ) ||
+    ( playerSelection === "paper" && computerSelection === "rock" ) ||
+    ( playerSelection === "scissors" && computerSelection === "paper" )
+  ) {
+    return `You win! ${capitalizeString(playerSelection)} beats ${computerSelection} every time!`
+  } else if (
+    ( playerSelection === "rock" && computerSelection === "paper" ) ||
+    ( playerSelection === "paper" && computerSelection === "scissors" ) ||
+    ( playerSelection === "scissors" && computerSelection === "rock" )
+  ) {
+    return `You loose! ${capitalizeString(playerSelection)} is beaten by ${computerSelection}!`
+  } else {
+    return `It's a tie! Both players picked ${playerSelection}`;
+  }
+}
+
+
+/**
+ * @function displayRoundResult
+ * @description Takes the round result string as argument and updates the DOM to display round result
+ * @param {string} str 
+ */
+function displayRoundResult(str) {
+  const roundP = document.querySelector("p.round-score");
+  roundP.textContent = str;
+}
+
+
+/**
+ * @function updateScore
+ * @description Update player or computer score based on the result of the given round
+ * @param {*} playerSelection "rock", "paper" or "scissors"
+ * @param {*} computerSelection "rock", "paper" or "scissors"
+ */
+function updateScore(playerSelection, computerSelection) {
+  if(
+    ( playerSelection === "rock" && computerSelection === "scissors" ) ||
+    ( playerSelection === "paper" && computerSelection === "rock" ) ||
+    ( playerSelection === "scissors" && computerSelection === "paper" )
+  ) {
+    playerScore++;
+  } else if (
+    ( playerSelection === "rock" && computerSelection === "paper" ) ||
+    ( playerSelection === "paper" && computerSelection === "scissors" ) ||
+    ( playerSelection === "scissors" && computerSelection === "rock" )
+  ) {
+    computerScore++;
+  }
+}
+
+
+/**
+ * @function displayScore
+ * @description Takes the player score and computer score as arguments and update the DOM to display the score
+ * @param {number} playerScore 
+ * @param {number} computerScore 
+ */
+function displayScore(playerScore, computerScore) {
+  const totalSpan = document.querySelector("span.score-count");
+  totalSpan.textContent = `${playerScore} - ${computerScore}`;
+}
+
+
+
+function handleGameEnd(playerScore, computerScore) {
+  const container = document.querySelector("div.score");
+  
+  // disable buttons on game end
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach(button => button.setAttribute("disabled", "true"));
+
+  const gameEndP = document.createElement("p");
+  gameEndP.className="game-end";
+
+  if(playerScore === 5) {
+    gameEndP.textContent = "Hoooray!! You won the game!";
+  } else if (computerScore === 5) {
+    gameEndP.textContent = "Oh nooo! You have lost!";
+  }
+
+  
+  const restartButton = document.createElement("button");
+  restartButton.textContent = "Play again!";
+
+  // Reload browser to reset score and enable choice buttons
+  restartButton.addEventListener("click", () => document.location.reload());
+
+  container.appendChild(gameEndP);
+  container.appendChild(restartButton);
+}
+
+
+/**
+ * @function playRound 
+ * @description Simulates the necessary action to play a round and display the round score and game score to the DOM
+ * @param {string} playerSelection "rock", "paper" or "scissors"
+ * @param {string} computerSelection "rock", "paper" or "scissors"
  */
 function playRound(playerSelection, computerSelection) {
-  playerSelection = playerSelection.toLocaleLowerCase();
+  playerSelection = playerSelection.toLowerCase();
 
-  if(playerSelection === "rock") {
-    if(computerSelection === "scissors") {
-      console.log("You win! Rock beats Scissors");
-      return "win";
-    } else if(computerSelection === "paper") {
-      console.log("You loose! Paper beats Rock");
-      return "loss";
-    } else {
-      console.log("It's a tie. Both picked Rock");
-      return "tie";
-    }
-  } else if(playerSelection === "paper") {
-    if(computerSelection === "rock") {
-      console.log("You win! Paper beats rock");
-      return "win";
-    } else if(computerSelection === "scissors") {
-      console.log("You loose! Scissors beats paper");
-      return "loss";
-    } else {
-      console.log("It's a tie. Both picked Paper");
-      return "tie";
-    }
-  } else if(playerSelection === "scissors") {
-    if(computerSelection === "paper") {
-      console.log("You win! Scissors beats Paper");
-      return "win";
-    } else if(computerSelection === "rock") {
-      console.log("You loose! Rock beats Scissors");
-      return "loss";
-    } else {
-      console.log("It's a tie. Both picked Scissors");
-      return "tie";
-    }
+  const resultString = getResultString(playerSelection, computerSelection);
+
+  displayRoundResult(resultString);
+
+  updateScore(playerSelection, computerSelection);
+  
+  displayScore(playerScore, computerScore);
+
+  if(playerScore === 5 || computerScore === 5) {
+    handleGameEnd(playerScore, computerScore);
   }
 }
 
 
-/**
- * @function validateInput Validates that the player has picked either rock, paper or scissor
- * @param {*} input 
- */
-function validateInput(input) {
-  if(typeof input !== "string") {
-    return false;
-  }
-
-  if(!VALID_SELECTIONS.includes(input.toLowerCase())) {
-    return false;
-  }
-
-  return true;
-}
-
-
-/**
- * @function game Simulates the numRounds number of rounds of rock, paper, scissors and returns the winner
- * @param {string} numRounds The number if games
- * @return {string} String that states whoever won the game
- */
-function game(numRounds = 5) {
-  let playerScore = 0;
-  let computerScore = 0;
-
-  for (let i = 0; i < numRounds; i++) {
-    const computerChoice = getComputerChoice();
-    
-    let playerChoice= prompt("Make your choice: Rock, Paper or Scissors?");
-
-    while(!validateInput(playerChoice)) {
-      playerChoice= prompt("Wrong input, try again: Rock, Paper or Scissors?");
-    }
-
-    const result =  playRound(playerChoice, computerChoice);
-
-    if(result === "win") {
-      playerScore++;
-    } else if (result === "loss") {
-      computerScore++;
-    }
-  }
-
-  if(playerScore > computerScore) {
-    return `Congratulations, you won ${playerScore} - ${computerScore}`;
-  } else if (playerScore < computerScore) {
-    return `Oh no, you lost ${playerScore} - ${computerScore}`;
-  } else {
-    return `It's a tie. The result is ${playerScore} - ${computerScore}`;
-  }
-}
-
-console.log(game(5));
+// Add event-listener to buttons
+const buttons = document.querySelectorAll("button");
+buttons.forEach(button => button.addEventListener("click", e => playRound(e.target.id, getComputerChoice())));
